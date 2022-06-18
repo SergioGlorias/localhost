@@ -25,8 +25,9 @@ export default {
       req.open('GET', "/cdn-cgi/trace", false);
       req.send(null);
       // is paintext, but works
-      let ip = req.responseText.match(/[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/);
-      ip = ip ? ip[0] : "Unknown";
+      let ip = req.responseText.split("\n")
+      ip = ip.filter((data) => data.startsWith("ip="))
+      ip = ip[0].replace("ip=", "")
       return ip;
     }
   },
