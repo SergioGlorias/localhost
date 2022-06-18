@@ -1,7 +1,8 @@
 <script setup>
-import WelcomeItem from './WelcomeItem.vue'
-import ToolingIcon from './icons/IconTooling.vue'
-import SupportIcon from './icons/IconSupport.vue'
+import WelcomeItem from "./WelcomeItem.vue";
+import ToolingIcon from "./icons/IconTooling.vue";
+import SupportIcon from "./icons/IconSupport.vue";
+import axios from "axios";
 </script>
 
 <template>
@@ -31,32 +32,36 @@ import SupportIcon from './icons/IconSupport.vue'
 
 <script>
 export default {
-  props: {
-    heads: {
-      type: Array,
-      default: [{key:"No HTTP Headers", value:"No HTTP Headers"}]
-    }
+  data() {
+    return {
+      heads: [{ key: "No HTTP Headers", value: "No HTTP Headers" }],
+    };
   },
   methods: {
     getHeaders() {
-      const req = new XMLHttpRequest();
-      req.open('GET', "https://api.serginho.dev/headers", false);
-      req.send(null);
-      let json = JSON.parse(req.responseText);
+      /*const req = fetch("https://api.serginho.dev/headers");
+      let json = req.then(res => res.json()).then(json => json);
       // json transform to array
       let heads = [];
       for (let key in json) {
-        heads.push({key: key, value: json[key]});
+        heads.push({ key: key, value: json[key] });
       }
-      return heads;
-    }
+      return heads || [{ key: "No HTTP Headers", value: "No HTTP Headers" }];*/
+      return axios.get("https://api.serginho.dev/headers").then((res) => {
+        let heads = [];
+        for (let key in res.data) {
+          heads.push({ key: key, value: res.data[key] });
+        }
+        return heads || [{ key: "No HTTP Headers", value: "No HTTP Headers" }];
+      });
+    },
   },
-  computed: {
-    heads() {
-      return this.getHeaders()
-    }
-  }
-}
+  mounted() {
+    this.getHeaders().then((heads) => {
+      this.heads = heads;
+    });
+  },
+};
 </script>
 
 <style scoped>
