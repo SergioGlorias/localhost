@@ -40,17 +40,15 @@ export default {
   methods: {
     getHeaders() {
       const req = new XMLHttpRequest();
-      req.open('GET', document.location, false);
+      req.open('GET', "https://api.serginho.dev/headers", false);
       req.send(null);
-      let headers = req.getAllResponseHeaders().split('\n');
-      headers = headers.map(h => h.split(': '));
-      headers = headers.map(h => {
-        return {
-          key: h[0],
-          value: h[1]
-        }
-      });
-      return headers  || 'No HTTP Headers'
+      let json = JSON.parse(req.responseText);
+      // json transform to array
+      let heads = [];
+      for (let key in json) {
+        heads.push({key: key, value: json[key]});
+      }
+      return heads;
     }
   },
   computed: {
